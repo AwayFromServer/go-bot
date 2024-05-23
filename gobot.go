@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-bot/bot"
+	"gobot/bot"
 	"log"
 	"os"
 )
