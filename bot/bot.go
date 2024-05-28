@@ -35,15 +35,18 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.ID == discord.State.User.ID {
 		return
 	}
-
 	switch {
-	case strings.Contains(message.Content, "server status"):
-		discord.ChannelMessageSend(message.ChannelID, "I can help with that! Use '!status'!")
-	case strings.Contains(message.Content, "bot"):
-		discord.ChannelMessageSend(message.ChannelID, "Who, me?")
-	case strings.Contains(message.Content, "!status"):
-		currentStatus := getCurrentStatus(message.Content)
-		discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
+	case strings.Contains(message.ChannelID, "1203220338100535327"):
+		switch {
+		case strings.Contains(message.Content, "server status"):
+			discord.ChannelMessageSend(message.ChannelID, "I can help with that! Use '!status'!")
+		case strings.Contains(message.Content, "bot"):
+			discord.ChannelMessageSend(message.ChannelID, "Who, me?")
+		case strings.Contains(message.Content, "!status"):
+			currentStatus := getCurrentStatus(message.Content)
+			discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
+		}
 	}
-
 }
+
+func respawn() {}
