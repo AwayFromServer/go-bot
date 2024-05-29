@@ -1,4 +1,4 @@
-name: Build
+name: Go Builder
 on:
   push:
     branches: [ main ]
@@ -8,6 +8,7 @@ on:
 
 jobs:
   linux-build:
+    name: Go Build
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
