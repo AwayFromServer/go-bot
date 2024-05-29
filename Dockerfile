@@ -38,3 +38,5 @@ COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifica
 COPY --from=build /bin/gobot_${TARGETOS}-${TARGETARCH}${TARGETVARIANT} /gobot
 
 ENTRYPOINT [ "/gobot" ]
+
+FROM gobot-$TARGETOS AS gobot
