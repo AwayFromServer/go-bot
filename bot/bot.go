@@ -22,7 +22,10 @@ func Run() {
 
 	discord.AddHandler(newMessage)
 
-	discord.Open()
+	err = discord.Open()
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer discord.Close()
 
 	fmt.Println("Bot running...")
@@ -42,18 +45,18 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 			_, err := discord.ChannelMessageSend(message.ChannelID, "I can help with that! Use '!status'!")
 
 			if err != nil {
-				fmt.Println(err)
+				log.Fatal(err)
 			}
 		case strings.Contains(message.Content, "bot"):
 			_, err := discord.ChannelMessageSend(message.ChannelID, "Who, me?")
 			if err != nil {
-				fmt.Println(err)
+				log.Fatal(err)
 			}
 		case strings.Contains(message.Content, "!status"):
 			currentStatus := getCurrentStatus(message.Content)
 			_, err := discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
 			if err != nil {
-				fmt.Println(err)
+				log.Fatal(err)
 			}
 		}
 	}
