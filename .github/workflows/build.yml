@@ -1,0 +1,27 @@
+name: Build
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+    container:
+      image: golang:1.22-alpine
+    steps:
+      - run: |
+          git config --global user.email "bogus@example.com"
+          git config --global user.name "Someone"
+          git config --global --add safe.directory /__w/gobot/gobot
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: make build
+      - name: Save binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: gobot
+          path: bin/gobot

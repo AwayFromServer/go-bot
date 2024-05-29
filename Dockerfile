@@ -35,6 +35,6 @@ LABEL org.opencontainers.image.revision=$VCS_REF \
 	org.opencontainers.image.source="https://github.com/awayfromserver/gobot"
 
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=build /bin/gobot_${TARGETOS}-{${TARGETARCH}{${TARGETVARIANT} /gobot
+COPY --from=build /bin/gobot_${TARGETOS}-${TARGETARCH}${TARGETVARIANT} /gobot
 
 ENTRYPOINT [ "/gobot" ]

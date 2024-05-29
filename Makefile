@@ -1,5 +1,6 @@
 .DEFAULT_GOAL = build
 GO := go
+extension = $(patsubst windows,.exe,$(filter windows,$(1)))
 PKG_NAME := gobot
 DOCKER_REPO ?= awayfromserver/$(PKG_NAME)
 PREFIX := .
@@ -26,6 +27,17 @@ GOOS ?= $(shell $(GO) version | sed 's/^.*\ \([a-z0-9]*\)\/\([a-z0-9]*\)/\1/')
 GOARCH ?= $(shell $(GO) version | sed 's/^.*\ \([a-z0-9]*\)\/\([a-z0-9]*\)/\2/')
 CGO_ENABLED=0
 
+ifeq ("$(TARGETVARIANT)","")
+ifneq ("$(GOARM)","")
+TARGETVARIANT := v$(GOARM)
+endif
+else
+ifeq ("$(GOARM)","")
+GOARM ?= $(subst v,,$(TARGETVARIANT))
+endif
+endif
+
+platforms := linux-amd64
 
 clean:
 	rm -Rf $(PREFIX)/bin/*
@@ -86,6 +98,13 @@ build-release: artifacts.cid
 docker-images: gobot.iid
 
 GO_FILES := $(shell find . -type f -name "*.go")
+
+$(PREFIX)/bin/$(PKG_NAME)_%$(TARGETVARIANT)$(call extension,$(GOOS)): $(GO_FILES)
+	GOOS=$(shell echo $* | cut -f1 -d-) GOARCH=$(shell echo $* | cut -f2 -d- ) GOARM=$(GOARM) CGO_ENABLED=$(CGO_ENABLED) \
+		$(GO) build \
+			-ldflags "-w -s $(GO_LDFLAGS)" \
+			-o $@ \
+			.
 
 $(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS)): $(PREFIX)/bin/$(PKG_NAME)_$(GOOS)-$(GOARCH)$(TARGETVARIANT)$(call extension,$(GOOS))
 	cp $< $@
