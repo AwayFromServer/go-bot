@@ -31,10 +31,80 @@ clean:
 	rm -Rf $(PREFIX)/bin/*
 	rm -f $(PREFIX)/*.[ci]id
 
+build-x: $(patsubst %,$(PREFIX)/bin/$(PKG_NAME)_%,$(platforms))
+
+$(PREFIX)/bin/%.zip: $(PREFIX)/bin/%
+	@zip -j $@ $^
+
+$(PREFIX)/bin/$(PKG_NAME)_%_checksum_sha256.txt: $(PREFIX)/bin/$(PKG_NAME)_%
+	@sha256sum $< > $@
+
+$(PREFIX)/bin/$(PKG_NAME)_%_checksum_sha512.txt: $(PREFIX)/bin/$(PKG_NAME)_%
+	@sha512sum $< > $@
+
+$(PREFIX)/bin/checksums.txt: $(PREFIX)/bin/checksums_sha256.txt
+	@cp $< $@
+
+$(PREFIX)/bin/checksums_sha256.txt: \
+		$(patsubst %,$(PREFIX)/bin/$(PKG_NAME)_%_checksum_sha256.txt,$(platforms))
+	@cat $^ > $@
+
+$(PREFIX)/bin/checksums_sha512.txt: \
+		$(patsubst %,$(PREFIX)/bin/$(PKG_NAME)_%_checksum_sha512.txt,$(platforms))
+	@cat $^ > $@
+
+$(PREFIX)/%.signed: $(PREFIX)/%
+	@keybase sign < $< > $@
+
+%.iid: Dockerfile
+	@docker build \
+		--build-arg VCS_REF=$(COMMIT) \
+		--target $(subst .iid,,$@) \
+		--iidfile $@ \
+		.
+
+docker-multi: Dockerfile
+	docker buildx build \
+		--build-arg VCS_REF=$(COMMIT) \
+		--platform $(DOCKER_PLATFORMS) \
+		--tag $(DOCKER_REPO):$(TAG_LATEST) \
+		--target gobot \
+		$(BUILDX_ACTION) .
+	docker buildx build \
+		--build-arg VCS_REF=$(COMMIT) \
+		--platform $(DOCKER_LINUX_PLATFORMS) \
+		--tag $(DOCKER_REPO):$(TAG_ALPINE) \
+		--target gobot-alpine \
+		$(BUILDX_ACTION) .
+
+%.cid: %.iid
+	@docker create $(shell cat $<) > $@
+
+build-release: artifacts.cid
+	@docker cp $(shell cat $<):/bin/. bin/
+
+docker-images: gobot.iid
+
+GO_FILES := $(shell find . -type f -name "*.go")
+
+$(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS)): $(PREFIX)/bin/$(PKG_NAME)_$(GOOS)-$(GOARCH)$(TARGETVARIANT)$(call extension,$(GOOS))
+	cp $< $@
+
 build: $(PREFIX)/bin/$(PKG_NAME)_$(GOOS)-$(GOARCH)$(TARGETVARIANT)$(call extension,$(GOOS)) $(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS))
 
 test:
 	$(GO) test -race -coverprofile=c.out ./...
+
+integration: $(PREFIX)/bin/$(PKG_NAME)
+	$(GO) test -v \
+		-ldflags "-X `$(GO) list ./internal/tests/integration`.GobotBinPath=$(shell pwd)/$<" \
+		./internal/tests/integration
+
+integration.iid: Dockerfile.integration $(PREFIX)/bin/$(PKG_NAME)_linux-amd64$(call extension,$(GOOS))
+	docker build -f $< --iidfile $@ .
+
+test-integration-docker: integration.iid
+	docker run -it --rm $(shell cat $<)
 
 lint:
 	@golangci-lint run --verbose --max-same-issues=0 --max-issues-per-linter=0
@@ -42,5 +112,5 @@ lint:
 ci-lint:
 	@golangci-lint run --verbose --max-same-issues=0 --max-issues-per-linter=0 --out-format=github-actions
 
-.PHONY: clean test build lint clean-images clean-containers docker-images
+.PHONY: clean test build-x build-release build test-integration-docker lint clean-images clean-containers docker-images integration
 .DELETE_ON_ERROR:
