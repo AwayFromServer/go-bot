@@ -1,5 +1,1 @@
-# Both of these are caused by gloang.org/x/crypto, used by discordgo
-# They mostly affect running SSH servers and getting empty packets,
-# so they shouldn't be a huge risk
-CVE-2021-43565
-CVE-2022-27191
+# 
