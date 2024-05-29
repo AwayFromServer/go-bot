@@ -22,7 +22,10 @@ func Run() {
 
 	discord.AddHandler(newMessage)
 
-	discord.Open()
+	err = discord.Open()
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer discord.Close()
 
 	fmt.Println("Bot running...")
@@ -39,14 +42,22 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 	case strings.Contains(message.ChannelID, "1203220338100535327"):
 		switch {
 		case strings.Contains(message.Content, "server status"):
-			discord.ChannelMessageSend(message.ChannelID, "I can help with that! Use '!status'!")
+			_, err := discord.ChannelMessageSend(message.ChannelID, "I can help with that! Use '!status'!")
+
+			if err != nil {
+				log.Fatal(err)
+			}
 		case strings.Contains(message.Content, "bot"):
-			discord.ChannelMessageSend(message.ChannelID, "Who, me?")
+			_, err := discord.ChannelMessageSend(message.ChannelID, "Who, me?")
+			if err != nil {
+				log.Fatal(err)
+			}
 		case strings.Contains(message.Content, "!status"):
-			currentStatus := getCurrentStatus(message.Content)
-			discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
+			currentStatus := getCurrentStatus()
+			_, err := discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }
-
-func respawn() {}

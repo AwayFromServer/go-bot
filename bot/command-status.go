@@ -9,7 +9,7 @@ import (
 
 const URL string = "http://hadbrew.my.pebble.host:8012"
 
-func getCurrentStatus(message string) *discordgo.MessageSend {
+func getCurrentStatus() *discordgo.MessageSend {
 	client := http.Client{Timeout: 5 * time.Second}
 
 	response, err := client.Get(URL)
