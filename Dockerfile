@@ -41,7 +41,7 @@ ENTRYPOINT [ "/gobot" ]
 
 # --------------------------------------------------------------------
 
-FROM alpine:3.19 AS gobot-alpine
+FROM alpine:3.20 AS gobot-alpine
 
 ARG VCS_REF
 ARG TARGETOS
