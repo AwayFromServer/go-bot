@@ -1,4 +1,4 @@
-name: Docker Build
+name: Docker Builder
 on:
   push:
     branches: [ main ]
@@ -9,6 +9,7 @@ on:
 
 jobs:
   docker-build:
+    name: Docker Build
     runs-on: ubuntu-latest
     services:
       registry:

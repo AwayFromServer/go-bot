@@ -1,4 +1,4 @@
-name: Docker Image Scan
+name: Trivy Image Scanner
 on:
   push:
     branches: [ main ]
@@ -8,6 +8,7 @@ on:
 
 jobs:
   docker-build:
+    name: Trivy Image Scan
     permissions:
       security-events: write
     runs-on: ubuntu-latest
