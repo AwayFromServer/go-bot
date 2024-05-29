@@ -13,6 +13,7 @@ jobs:
       image: golang:1.22-alpine
     steps:
       - run: |
+          apk add git
           git config --global user.email "bogus@example.com"
           git config --global user.name "Someone"
           git config --global --add safe.directory /__w/gobot/gobot
