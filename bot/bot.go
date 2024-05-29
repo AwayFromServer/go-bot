@@ -53,7 +53,7 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 				log.Fatal(err)
 			}
 		case strings.Contains(message.Content, "!status"):
-			currentStatus := getCurrentStatus(message.Content)
+			currentStatus := getCurrentStatus()
 			_, err := discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
 			if err != nil {
 				log.Fatal(err)
