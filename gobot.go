@@ -1,9 +1,10 @@
 package main
 
 import (
-	"gobot/bot"
 	"log"
 	"os"
+
+	"github.com/awayfromserver/gobot/bot"
 )
 
 func main() {
