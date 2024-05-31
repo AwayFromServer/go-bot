@@ -14,6 +14,9 @@ jobs:
       image: golang:1.22-alpine
     steps:
       - run: |
+          echo "Event name is: " ${{ github.event_name }}
+          echo "Event type is: " ${{ github.event.action }}
+      - run: |
           apk add git make bash
           git config --global user.email "bogus@example.com"
           git config --global user.name "Someone"
