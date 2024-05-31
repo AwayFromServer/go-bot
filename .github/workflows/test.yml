@@ -1,3 +1,0 @@
-# You add this to your CI pipeline (after tests are run):
-#     - name: Update coverage report
-#       uses: ncruces/go-coverage-report@main

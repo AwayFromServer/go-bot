@@ -27,3 +27,6 @@ jobs:
         with:
           name: gobot
           path: bin/gobot
+      - run: make test
+      - name: Update coverage report
+        uses: ncruces/go-coverage-report@main

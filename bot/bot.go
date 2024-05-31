@@ -1,10 +1,10 @@
 package bot
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
-	"os/signal"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -18,17 +18,18 @@ var (
 func Setup() {
 	bt, ok := os.LookupEnv("BOT_TOKEN")
 	if !ok || bt == "" {
-		log.Fatal("Must set Discord token as env variable: BOT_TOKEN")
+		log.Print("Must set Discord token as env variable: BOT_TOKEN")
 	}
 	hbURL, ok := os.LookupEnv("HEARTBEAT_URL")
 	if !ok || hbURL == "" {
-		log.Fatal("Must set heartbeat URL as env variable: HEARTBEAT_URL")
+		log.Print("Must set heartbeat URL as env variable: HEARTBEAT_URL")
 	}
+	log.Print("Setting botToken and heartbeatURL")
 	botToken = bt
 	heartbeatURL = hbURL
 }
 
-func Run() {
+func Run(ctx context.Context) {
 	discord, err := discordgo.New("Bot " + botToken)
 	if err != nil {
 		log.Fatal(err)
@@ -43,9 +44,6 @@ func Run() {
 	defer discord.Close()
 
 	fmt.Println("Bot running...")
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	<-c
 }
 
 func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
