@@ -33,5 +33,8 @@ jobs:
           HEARTBEAT_URL: "https://google.com"      
       - name: Update coverage report
         uses: fgrosse/go-coverage-report@v1.0.1
+        with:
+          name: code-coverage
+          path: c.out
         if: github.event_name == 'push'
         continue-on-error: true
