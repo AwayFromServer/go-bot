@@ -39,7 +39,6 @@ jobs:
 
   code-coverage:
       name: Update coverage report
-      if: github.event_name == 'push'
       runs-on: ubuntu-latest
       needs: linux-build
       steps:
