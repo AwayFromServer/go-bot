@@ -32,7 +32,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           HEARTBEAT_URL: "https://google.com"
       - name: Update coverage report
-        uses: ncruces/go-coverage-report@v0
+        uses: ncruces/go-coverage-report@v0.3.0
         with:
           report: true
           chart: false
