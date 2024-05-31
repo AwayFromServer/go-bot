@@ -7,19 +7,17 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-const URL string = "http://hadbrew.my.pebble.host:8012"
-
-func getCurrentStatus() *discordgo.MessageSend {
+func getCurrentStatus(hbUrl string) (*discordgo.MessageSend, error) {
 	client := http.Client{Timeout: 5 * time.Second}
 
-	response, err := client.Get(URL)
+	response, err := client.Get(hbUrl)
 	if response == nil || err != nil {
 		return &discordgo.MessageSend{
-			Content: "I dunno about the server, but Dynmap appears to be offline... " + URL,
-		}
+			Content: "It looks like it's offline... " + hbUrl,
+		}, nil
 	}
 
 	return &discordgo.MessageSend{
-		Content: "It looks like it's up! " + URL,
-	}
+		Content: "It looks like it's up! " + hbUrl,
+	}, nil
 }
