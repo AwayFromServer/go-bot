@@ -33,3 +33,11 @@ jobs:
           HEARTBEAT_URL: "https://google.com"
       - name: Update coverage report
         uses: ncruces/go-coverage-report@main
+        with:
+          report: true
+          chart: true
+          amend: true
+        if: |
+          matrix.os == 'ubuntu-latest' &&
+          github.event_name == 'push'  
+        continue-on-error: true
