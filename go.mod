@@ -1,4 +1,4 @@
-module gobot
+module github.com/awayfromserver/gobot
 
 go 1.22.3
 

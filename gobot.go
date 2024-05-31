@@ -1,17 +1,21 @@
 package main
 
 import (
-	"gobot/bot"
-	"log"
+	"context"
+	"fmt"
 	"os"
+	"os/signal"
+
+	"github.com/awayfromserver/gobot/bot"
 )
 
 func main() {
-	botToken, ok := os.LookupEnv("BOT_TOKEN")
-	if !ok {
-		log.Fatal("Must set Discord token as env variable: BOT_TOKEN")
-	}
-
-	bot.BotToken = botToken
-	bot.Run()
+	ctx, cancel := context.WithCancel(context.Background())
+	bot.Setup()
+	bot.Run(ctx)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+	fmt.Println("Bot shutting down...")
+	cancel()
 }

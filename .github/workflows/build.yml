@@ -14,7 +14,7 @@ jobs:
       image: golang:1.22-alpine
     steps:
       - run: |
-          apk add git make
+          apk add git make bash
           git config --global user.email "bogus@example.com"
           git config --global user.name "Someone"
           git config --global --add safe.directory /__w/gobot/gobot
@@ -27,3 +27,17 @@ jobs:
         with:
           name: gobot
           path: bin/gobot
+      - run: make test
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          HEARTBEAT_URL: "https://google.com"
+      - name: Update coverage report
+        uses: ncruces/go-coverage-report@main
+        with:
+          report: true
+          chart: true
+          amend: true
+        if: |
+          matrix.os == 'ubuntu-latest' &&
+          github.event_name == 'push'  
+        continue-on-error: true
