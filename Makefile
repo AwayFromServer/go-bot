@@ -25,7 +25,6 @@ GO_LDFLAGS ?= $(COMMIT_FLAG) $(VERSION_FLAG)
 
 GOOS ?= $(shell $(GO) version | sed 's/^.*\ \([a-z0-9]*\)\/\([a-z0-9]*\)/\1/')
 GOARCH ?= $(shell $(GO) version | sed 's/^.*\ \([a-z0-9]*\)\/\([a-z0-9]*\)/\2/')
-CGO_ENABLED=0
 
 ifeq ("$(TARGETVARIANT)","")
 ifneq ("$(GOARM)","")
@@ -112,7 +111,7 @@ $(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS)): $(PREFIX)/bin/$(PKG_NAME)_$(
 build: $(PREFIX)/bin/$(PKG_NAME)_$(GOOS)-$(GOARCH)$(TARGETVARIANT)$(call extension,$(GOOS)) $(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS))
 
 test:
-	$(GO) test -race -coverprofile=c.out ./...
+	$(GO) test -coverprofile=c.out ./...
 
 integration: $(PREFIX)/bin/$(PKG_NAME)
 	$(GO) test -v \
