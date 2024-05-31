@@ -28,5 +28,8 @@ jobs:
           name: gobot
           path: bin/gobot
       - run: make test
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          HEARTBEAT_URL: "https://google.com"
       - name: Update coverage report
         uses: ncruces/go-coverage-report@main
