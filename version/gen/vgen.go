@@ -13,12 +13,12 @@ import (
 
 func main() {
 	descVer, err := describedVersion()
-	if err != nil {
+	if err != nil && descVer == nil {
 		log.Fatal(err)
 	}
 
 	latest, err := latestTag()
-	if err != nil {
+	if err != nil && latest == nil {
 		log.Fatal(err)
 	}
 
