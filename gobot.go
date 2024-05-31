@@ -10,6 +10,10 @@ import (
 )
 
 func main() {
+	testmode, ok := os.LookupEnv("TESTMODE")
+	if !ok || testmode == "true" {
+		return
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	bot.Setup()
 	bot.Run(ctx)

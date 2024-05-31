@@ -10,6 +10,7 @@ func TestMn(t *testing.T) {
 	if !ok || bt == "" {
 		t.Skip("BOT_TOKEN isn't set")
 	}
+	t.Setenv("TESTMODE", "true")
 
 	main()
 }
