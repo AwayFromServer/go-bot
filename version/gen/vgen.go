@@ -78,7 +78,7 @@ func version(descVer, latest *semver.Version) *semver.Version {
 
 func latestTag() (*semver.Version, error) {
 	// get the latest tag
-	tags, err := runCmd("git tag --list v*")
+	tags, err := runCmd("git tag --list v* | cat")
 	if err != nil {
 		return nil, fmt.Errorf("git tag failed: %w", err)
 	}
