@@ -44,7 +44,7 @@ jobs:
       steps:
         - uses: actions/checkout@v4
           with:
-          fetch-depth: 0
+            fetch-depth: 0
         - uses: fgrosse/go-coverage-report@v1.0.1
           with:
             coverage-artifact-name: code-coverage
