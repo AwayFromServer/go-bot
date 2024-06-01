@@ -3,8 +3,6 @@
 
 [![Codebeat Badge][codebeat-image]][codebeat-url]
 
-[![Go Coverage][coverage-image]][coverage-url]
-
 [![DockerHub Pulls][dockerhub-pulls-image]][dockerhub-url]
 
 
