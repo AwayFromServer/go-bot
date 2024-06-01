@@ -111,9 +111,6 @@ $(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS)): $(PREFIX)/bin/$(PKG_NAME)_$(
 build: $(PREFIX)/bin/$(PKG_NAME)_$(GOOS)-$(GOARCH)$(TARGETVARIANT)$(call extension,$(GOOS)) $(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS))
 
 test:
-	git describe --always
-	git tag --list v* | cat
-	echo $(shell $(GO) run ./version/gen/vgen.go)
 	$(GO) test -coverprofile=c.out ./...
 
 integration: $(PREFIX)/bin/$(PKG_NAME)

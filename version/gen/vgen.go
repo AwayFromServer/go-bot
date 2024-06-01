@@ -28,7 +28,7 @@ func main() {
 }
 
 func describedVersion() (*semver.Version, error) {
-	desc, err := runCmd("git describe --always")
+	desc, err := runCmd("git describe --tags")
 	if err != nil {
 		return nil, fmt.Errorf("git describe failed: %w", err)
 	}
@@ -78,7 +78,7 @@ func version(descVer, latest *semver.Version) *semver.Version {
 
 func latestTag() (*semver.Version, error) {
 	// get the latest tag
-	tags, err := runCmd("git tag --list | grep -E ^v[0-9].[0-9].[0-9]")
+	tags, err := runCmd("git tag --list")
 	if err != nil {
 		return nil, fmt.Errorf("git tag failed: %w", err)
 	}
