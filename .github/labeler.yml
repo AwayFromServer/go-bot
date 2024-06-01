@@ -1,11 +1,11 @@
 dependencies:
-  - changed_files:
-    - any-glob-to-any-file:
-      - go.mod
-      - go.sum
+- changed-files:
+  - any-glob-to-any-file:
+    - go.mod
+    - go.sum
 
 build:
-  - changed_files:
-    - any-glob-to-any-file:
-      - .github/workflows/*
-      - Makefile
+- changed-files:
+  - any-glob-to-any-file:
+    - .github/workflows/*
+    - Makefile
