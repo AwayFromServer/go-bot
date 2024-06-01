@@ -14,12 +14,12 @@ import (
 func main() {
 	descVer, err := describedVersion()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ERROR describedVersion: %e - %v", err, descVer)
 	}
 
 	latest, err := latestTag()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ERROR latestTag: %e - %v", err, latest)
 	}
 
 	ver := version(descVer, latest)
@@ -78,7 +78,7 @@ func version(descVer, latest *semver.Version) *semver.Version {
 
 func latestTag() (*semver.Version, error) {
 	// get the latest tag
-	tags, err := runCmd("git tag --list v* | cat")
+	tags, err := runCmd("git tag --list | grep -E ^v[0-9].[0-9].[0-9]")
 	if err != nil {
 		return nil, fmt.Errorf("git tag failed: %w", err)
 	}
