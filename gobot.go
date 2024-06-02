@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 
@@ -10,8 +11,12 @@ import (
 )
 
 func main() {
-	if err := getBotToken(); err != nil {
-		os.Exit(1)
+	err := getBotToken()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = getTargetUrl()
+	if err != nil {
 	}
 }
 
@@ -21,7 +26,7 @@ func getBotToken() error {
 	if !ok || bt == "" {
 		return fmt.Errorf("must set %s as env variable", "discord token")
 	}
-	return getTargetUrl(bt)
+	return nil
 }
 func getTargetUrl(bt string) error {
 	// set TARGET_URL
