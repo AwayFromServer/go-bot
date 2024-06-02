@@ -9,7 +9,7 @@ func TestSetup(t *testing.T) {
 	expected_token := "abc123"
 	expected_url := "https://google.com"
 	t.Setenv("BOT_TOKEN", expected_token)
-	t.Setenv("HEARTBEAT_URL", expected_url)
+	t.Setenv("TARGET_URL", expected_url)
 
 	Setup()
 
@@ -19,17 +19,17 @@ func TestSetup(t *testing.T) {
 			t.Skip("botToken is unset")
 		}
 		t.Fatalf("BOT_TOKEN = %q, want %v", botToken, expected_token)
-	case heartbeatURL != expected_url:
-		if heartbeatURL == "" {
-			t.Skip("heartbeatURL is unset")
+	case targetURL != expected_url:
+		if targetURL == "" {
+			t.Skip("targetURL is unset")
 		}
-		t.Fatalf("HEARTBEAT_URL = %q, want %v", heartbeatURL, expected_url)
+		t.Fatalf("TARGET_URL = %q, want %v", targetURL, expected_url)
 	}
 }
 
 func TestRun(t *testing.T) {
 	expected_url := "https://google.com"
-	t.Setenv("HEARTBEAT_URL", expected_url)
+	t.Setenv("TARGET_URL", expected_url)
 	Setup()
 
 	if botToken == "" {
@@ -38,8 +38,8 @@ func TestRun(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	go Run(ctx)
 
-	if heartbeatURL != expected_url { // placeholder -> bot functions get tested here
-		t.Fatalf("HEARTBEAT_URL = %q, want %v", heartbeatURL, expected_url)
+	if targetURL != expected_url { // placeholder -> bot functions get tested here
+		t.Fatalf("TARGET_URL = %q, want %v", targetURL, expected_url)
 	}
 	cancel()
 }

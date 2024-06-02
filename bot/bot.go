@@ -11,25 +11,30 @@ import (
 )
 
 var (
-	botToken     string
-	heartbeatURL string
+	botToken  string
+	targetURL string
+
+	err error
 )
 
-func Setup() {
+func setup() error {
 	bt, ok := os.LookupEnv("BOT_TOKEN")
+
 	if !ok || bt == "" {
-		log.Print("Must set Discord token as env variable: BOT_TOKEN")
+		err = fmt.Errorf("must set %a as env variable", "discord token")
 	}
-	hbURL, ok := os.LookupEnv("HEARTBEAT_URL")
-	if !ok || hbURL == "" {
-		log.Print("Must set heartbeat URL as env variable: HEARTBEAT_URL")
+	tURL, ok := os.LookupEnv("TARGET_URL")
+	if !ok || tURL == "" {
+		err = fmt.Errorf("must set %a as env variable", "discord token")
 	}
-	log.Print("Setting botToken and heartbeatURL")
+	log.Print("Setting botToken and targetURL")
 	botToken = bt
-	heartbeatURL = hbURL
+	targetURL = tURL
+	return err
 }
 
-func Run(ctx context.Context) {
+func Run(ctx context.Context) error {
+	setup()
 	discord, err := discordgo.New("Bot " + botToken)
 	if err != nil {
 		log.Fatal(err)
@@ -44,12 +49,14 @@ func Run(ctx context.Context) {
 	defer discord.Close()
 
 	fmt.Println("Bot running...")
+
+	return err
 }
 
-func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
+func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) error {
 	// Don't respond to bot's own messages
 	if message.Author.ID == discord.State.User.ID {
-		return
+		return nil
 	}
 
 	// Outer switch looking for specific channels
@@ -69,7 +76,7 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 				log.Fatal(err)
 			}
 		case strings.Contains(message.Content, "!status"):
-			currentStatus, hberr := getCurrentStatus(heartbeatURL)
+			currentStatus, hberr := getCurrentStatus(targetURL)
 			if hberr != nil {
 				log.Fatal(hberr)
 			}
@@ -79,4 +86,5 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 			}
 		}
 	}
+	return err
 }

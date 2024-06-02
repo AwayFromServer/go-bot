@@ -6,7 +6,12 @@
 [![DockerHub Pulls][dockerhub-pulls-image]][dockerhub-url]
 
 
-Gobot is a simple Discord bot written in Go that checks the status of the HadBrew Minecraft server running on PebbleHost
+Gobot is a simple Discord bot written in Go that checks the status of a given URL, defined by the ENV variable TARGET_URL
+
+Required inputs:
+
+TARGET_URL = https://some.website:goes/here
+BOT_TOKEN = abc123bottokenfordiscordaccesstoyourserver
 
 [gh-actions-image]: https://github.com/AwayFromServer/gobot/actions/workflows/build.yml/badge.svg
 [gh-actions-url]: https://github.com/AwayFromServer/gobot/actions/workflows/build.yml
