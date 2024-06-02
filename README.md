@@ -6,7 +6,7 @@ For example, the `!status` command checks if the bot can reach a given URL, defi
 
 ## Prereqs
 - Have a server where you have enough permissions to add integrations and bots, I guess
-- Have either Go v`1.22.0` or greater installed, or Docker if using containerized Gobot
+- Have either Go v`1.22.3` or greater installed, or Docker if using containerized Gobot
 
 ## Getting Gobot Running
 
