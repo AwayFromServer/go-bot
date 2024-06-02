@@ -1,10 +1,5 @@
 # gobot
-[![Go Builder][gh-actions-image]][gh-actions-url]
-
-[![Codebeat Badge][codebeat-image]][codebeat-url]
-
-[![DockerHub Pulls][dockerhub-pulls-image]][dockerhub-url]
-
+[![Go Builder][gh-actions-image]][gh-actions-url] [![Codebeat Badge][codebeat-image]][codebeat-url] [![DockerHub Pulls][dockerhub-pulls-image]][dockerhub-url]
 
 Gobot is a simple Discord bot written in Go that checks the status of a given URL, defined by the ENV variable TARGET_URL
 
