@@ -4,47 +4,35 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-var (
+type Bot struct {
 	botToken  string
 	targetURL string
-
-	err error
-)
-
-func setup() error {
-	bt, ok := os.LookupEnv("BOT_TOKEN")
-
-	if !ok || bt == "" {
-		err = fmt.Errorf("must set %s as env variable", "discord token")
-	}
-	tURL, ok := os.LookupEnv("TARGET_URL")
-	if !ok || tURL == "" {
-		err = fmt.Errorf("must set %s as env variable", "discord token")
-	}
-	log.Print("Setting botToken and targetURL")
-	botToken = bt
-	targetURL = tURL
-	return err
 }
 
-func Run(ctx context.Context) error {
-	setup()
-	discord, err := discordgo.New("Bot " + botToken)
+func New(bt, t string) *Bot {
+	b := Bot{
+		botToken:  bt,
+		targetURL: t,
+	}
+	return &b
+}
+
+func (b *Bot) Run(ctx context.Context) error {
+	discord, err := discordgo.New("Bot " + b.botToken)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	discord.AddHandler(newMessage)
+	discord.AddHandler(b.newMessage)
 
 	err = discord.Open()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer discord.Close()
 
@@ -53,7 +41,7 @@ func Run(ctx context.Context) error {
 	return err
 }
 
-func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
+func (b *Bot) newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 	// Don't respond to bot's own messages
 	if message.Author.ID == discord.State.User.ID {
 		return
@@ -72,9 +60,9 @@ func newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
 			log.Fatal(err)
 		}
 	case strings.Contains(message.Content, "!status"):
-		currentStatus, hberr := getCurrentStatus(targetURL)
-		if hberr != nil {
-			log.Fatal(hberr)
+		currentStatus, terr := getCurrentStatus(b.targetURL)
+		if terr != nil {
+			log.Fatal(terr)
 		}
 		_, err := discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
 		if err != nil {
