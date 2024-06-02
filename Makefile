@@ -111,7 +111,7 @@ $(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS)): $(PREFIX)/bin/$(PKG_NAME)_$(
 build: $(PREFIX)/bin/$(PKG_NAME)_$(GOOS)-$(GOARCH)$(TARGETVARIANT)$(call extension,$(GOOS)) $(PREFIX)/bin/$(PKG_NAME)$(call extension,$(GOOS))
 
 test:
-	$(GO) test -v -coverprofile=c.out ./...
+	$(GO) test -coverprofile=c.out ./...
 
 integration: $(PREFIX)/bin/$(PKG_NAME)
 	$(GO) test -v \

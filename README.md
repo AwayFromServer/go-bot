@@ -3,7 +3,7 @@
 
 Gobot is a simple Discord bot written in Go that checks the status of a given URL, defined by the ENV variable TARGET_URL
 
-Required inputs:
+### Required inputs:
 
 TARGET_URL = https://some.website:goes/here
 BOT_TOKEN = abc123bottokenfordiscordaccesstoyourserver
