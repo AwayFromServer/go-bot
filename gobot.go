@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -10,44 +11,44 @@ import (
 	"github.com/awayfromserver/gobot/bot"
 )
 
+var (
+	BotChannel = make(chan os.Signal, 1)
+)
+
 func main() {
-	err := getBotToken()
+	err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = getTargetUrl()
+}
+
+func getFromEnv(target string) (string, error) {
+	value, ok := os.LookupEnv(target)
+	if !ok || value == "" {
+		return "", errors.New("must set " + target + " as env variable")
+	}
+	return value, nil
+}
+
+func run() error {
+	bt, err := getFromEnv("BOT_TOKEN")
 	if err != nil {
-	}
-}
-
-func getBotToken() error {
-	// set BOT_TOKEN
-	bt, ok := os.LookupEnv("BOT_TOKEN")
-	if !ok || bt == "" {
-		return fmt.Errorf("must set %s as env variable", "discord token")
-	}
-	return nil
-}
-func getTargetUrl(bt string) error {
-	// set TARGET_URL
-	t, ok := os.LookupEnv("TARGET_URL")
-	if !ok || t == "" {
-		return fmt.Errorf("must set %s as env variable", "discord token")
+		return err
 	}
 
-	return run(bt, t)
-}
+	t, err := getFromEnv("TARGET_URL")
+	if err != nil {
+		return err
+	}
 
-func run(bt, t string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	b := bot.New("", "")
-	err := b.Run(ctx)
+	b := bot.New(bt, t)
+	err = b.Run(ctx)
 
-	botChannel := make(chan os.Signal, 1)
-	signal.Notify(botChannel, os.Interrupt)
-	<-botChannel
+	signal.Notify(BotChannel, os.Interrupt)
+	<-BotChannel
 	fmt.Println("Bot shutting down...")
 
 	return err
