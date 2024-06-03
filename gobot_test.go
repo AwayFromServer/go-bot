@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"syscall"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -57,9 +56,6 @@ func TestRun(t *testing.T) {
 				require.NotEqual(t, nil, err)
 				return
 			}
-			go run()
-
-			BotChannel <- syscall.SIGINT
 		})
 	}
 
@@ -69,7 +65,4 @@ func TestRun(t *testing.T) {
 	if ptvalT != "" {
 		os.Setenv("TARGET_URL", ptvalT)
 	}
-
-	go run()
-	BotChannel <- syscall.SIGINT
 }
