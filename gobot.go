@@ -45,7 +45,7 @@ func run() error {
 	defer cancel()
 
 	b := bot.New(bt, t)
-	err = b.Run(ctx)
+	go b.Run(ctx)
 
 	signal.Notify(BotChannel, os.Interrupt)
 	<-BotChannel
