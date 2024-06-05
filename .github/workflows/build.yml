@@ -23,9 +23,9 @@ jobs:
         with:
           version: 3.8.1
       - name: Create key.pgp
-        run: echo -e ${{ secrets.SOPS_KEY }} > key.pgp
-      - name: Import Private PGP Key
-        run: gpg --import key.pgp
+        run: echo -n $SOPS_KEY | base64 -d | gpg --import
+        env:
+          SOPS_KEY: ${{ secrets.SOPS_KEY }}
       - name: Decrypt config.enc.yaml
         run: sops decrypt config.enc.yaml
       - uses: actions/checkout@v4
