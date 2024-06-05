@@ -13,27 +13,14 @@ jobs:
     container:
       image: golang:1.22-alpine
     steps:
-      - uses: metro-digital/sops-decrypt@v0.x
-        id: secrets
-        with:
-          version: 3.8.1
-          file: config.yaml
-          gpg_key: ${{ secrets.SOPS_KEY }}
-          output_type: json
       - run: |
-          apk add git make bash
+          apk add git make bash sops gnupg
           git config --global user.email "bogus@example.com"
           git config --global user.name "Someone"
           git config --global --add safe.directory /__w/gobot/gobot
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - run: |
-          cat << EOF > ./config.yaml
-          Token: ${{ fromJson(steps.secrets.outputs.data).Token }}
-          Target: ${{  fromJson(steps.secrets.outputs.data).Target }}
-          Prefix: ${{  fromJson(steps.secrets.outputs.data).Prefix }}
-          EOF
       - run: make build
       - name: Save binary
         uses: actions/upload-artifact@v4
