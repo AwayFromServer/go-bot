@@ -16,12 +16,18 @@ jobs:
       DOCKER_BUILDKIT: 1
       DOCKER_CLI_EXPERIMENTAL: enabled
     steps:
+    - name: Info - hashFiles
+      run: |
+        echo ${{ hashFiles('.skip_ci') }}
+    - name: Info - PWD + LS
+      run: |
+        echo $PWD && ls -la
     - uses: actions/checkout@v4
       if: ${{ hashFiles('.skip_ci') }} == ''
     - name: Quick build (linux/alpine only)
       if: ${{ hashFiles('.skip_ci') }} == ''
       run: |
-        docker build --target gobot-alpine -t gobot . && echo $(hashFiles('.skip_ci')) && echo $PWD && ls -la
+        docker build --target gobot-alpine -t gobot .
     - name: Run Trivy vulnerability scanner (table output)
       if: ${{ hashFiles('.skip_ci') }} == ''
       uses: aquasecurity/trivy-action@master
