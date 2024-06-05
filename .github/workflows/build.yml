@@ -41,7 +41,8 @@ jobs:
           SOPS_KEY: "${{ secrets.SOPS_KEY }}"
   linux-build:
     name: Go Build
-    if: ${{ jobs.detect_bypass.skip_ci_check.outputs.exists == 'false' }}
+    needs: detect-bypass
+    if: ${{ needs.detect-bypass.skip_ci_check.outputs.exists }} == 'false'
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
