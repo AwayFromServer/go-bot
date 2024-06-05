@@ -17,12 +17,6 @@ jobs:
       DOCKER_CLI_EXPERIMENTAL: enabled
     steps:
     - uses: actions/checkout@v4
-    - name: Info - hashFiles
-      run: |
-        echo ${{ hashFiles('.skip_ci') }}
-    - name: Info - PWD + LS
-      run: |
-        echo $PWD && ls -la ..
     - name: Quick build (linux/alpine only)
       if: ${{ hashFiles('.skip_ci') }} == ''
       run: |

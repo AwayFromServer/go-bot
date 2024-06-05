@@ -36,7 +36,6 @@ jobs:
 
     steps:
     - name: Checkout repository
-      if: ${{ hashFiles('.skip_ci') }} == ""
       uses: actions/checkout@v4
 
     # Initializes the CodeQL tools for scanning.

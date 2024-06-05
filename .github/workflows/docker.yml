@@ -20,6 +20,7 @@ jobs:
       DOCKER_BUILDKIT: 1
       DOCKER_CLI_EXPERIMENTAL: enabled
     steps:
+    - uses: actions/checkout@v4
     - name: enable experimental mode
       if: ${{ hashFiles('.skip_ci') }} == ''
       run: |
