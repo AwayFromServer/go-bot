@@ -9,19 +9,18 @@ on:
 jobs:
   detect-bypass:  #for testing
     name: Detect Bypass
-    id: detect_bypass
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v1
       - name: Check for .skip_ci
-        id: skip_ci_check
+        id: skip-ci-check
         uses: thebinaryfelix/check-file-existence-action@v1
         with:
           files: '.skip_ci'
   testing:
     name: Testing Go Build
-    if: ${{ jobs.detect_bypass.skip_ci_check.outputs.exists == 'true' }}
+    if: ${{ jobs.detect-bypass.skip_ci_check.outputs.exists == 'true' }}
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
