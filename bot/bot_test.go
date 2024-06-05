@@ -1,36 +1,73 @@
 package bot
 
 import (
-	"context"
 	"testing"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSetup(t *testing.T) {
-	expected_token := "abc123"
-	expected_url := "https://google.com"
-	t.Setenv("BOT_TOKEN", expected_token)
-	t.Setenv("TARGET_URL", expected_url)
+const TESTFILE = "../config_test.yaml"
 
-	b := New(expected_token, expected_url)
+func TestConfigs(t *testing.T) {
+	testdata := []struct {
+		name     string
+		expected conf
+		actual   conf
+	}{
+		{
+			"no overrides",
+			conf{"foo", "bar", "baz"},
+			conf{},
+		},
+		{
+			"overrides",
+			conf{"abc", "123", "qqq"},
+			conf{"abc", "123", "qqq"},
+		}, //
+		{
+			"error thrown",
+			conf{"pap", "pep", "pip"},
+			conf{"pap", "pep", "pip"},
+		},
+		// {"", "", ""}, // new test case
+	}
 
-	assert.Equal(t, b.botToken, expected_token)
+	for _, subtest := range testdata {
+		t.Run(subtest.name, func(t *testing.T) {
+			t.Setenv(BT, subtest.actual.BotToken)
+			t.Setenv(TU, subtest.actual.BotTarget)
+			t.Setenv(BP, subtest.actual.BotPrefix)
+
+			var c conf
+			c.getConf(TESTFILE)
+			c.getOverrides()
+
+			assert.Equal(t, subtest.expected.BotToken, c.BotToken)
+			assert.Equal(t, subtest.expected.BotTarget, c.BotTarget)
+			assert.Equal(t, subtest.expected.BotPrefix, c.BotPrefix)
+
+		})
+	}
 }
 
-func TestRun(t *testing.T) {
-	expected_token := "abc123"
-	expected_url := "https://google.com"
-	t.Setenv("TARGET_URL", expected_url)
+func TestStartSession(t *testing.T) {
+	var c conf
+	c.getConf(CFGFILE)
+	b := Bot{config: c}
 
-	b := New(expected_token, expected_url)
+	b.startSession()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	assert.NotEqual(t, nil, b.session)
+}
 
-	go b.Run(ctx)
+func TestNewMessage(t *testing.T) {
+	var c conf
+	c.getConf(CFGFILE)
+	b := Bot{config: c}
+	b.startSession()
 
-	if b.targetURL != expected_url { // placeholder -> bot functions get tested here
-		t.Errorf("TARGET_URL = %v, want %v", b.targetURL, expected_url)
-	}
+	msg := &discordgo.MessageCreate{}
+
+	b.newMessage(b.session, msg)
 }
