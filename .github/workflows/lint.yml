@@ -14,10 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        if: ${{ hashFiles('.skip_ci') }} == ""
       - uses: actions/setup-go@v5
+        if: ${{ hashFiles('.skip_ci') }} == ""
         with:
           go-version-file: go.mod
       - name: golangci-lint
+        if: ${{ hashFiles('.skip_ci') }} == ""
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
