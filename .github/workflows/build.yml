@@ -9,7 +9,7 @@ on:
 jobs:
   detect-bypass:  #for testing
     name: Detect Bypass
-    id: detect-bypass
+    id: detect_bypass
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -21,7 +21,7 @@ jobs:
           files: '.skip_ci'
   testing:
     name: Testing Go Build
-    if: ${{ detect-bypass.skip_ci_check.outputs.exists == 'true' }}
+    if: ${{ jobs.detect_bypass.skip_ci_check.outputs.exists == 'true' }}
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
@@ -41,7 +41,7 @@ jobs:
           SOPS_KEY: "${{ secrets.SOPS_KEY }}"
   linux-build:
     name: Go Build
-    if: ${{ jobs.detect-bypass.skip_ci_check.outputs.exists == 'false' }}
+    if: ${{ jobs.detect_bypass.skip_ci_check.outputs.exists == 'false' }}
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
