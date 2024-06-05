@@ -10,7 +10,7 @@ jobs:
   testing:
     name: Testing Go Build
     needs: detect-bypass
-    if: ${{ hashFiles('.skip_ci') }} != ''
+    if: ${{ always() && hashFiles('.skip_ci') }} != ''
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
@@ -31,7 +31,7 @@ jobs:
   linux-build:
     name: Go Build
     needs: detect-bypass
-    if: ${{ hashFiles('.skip_ci') }} == ''
+    if: ${{ always() && hashFiles('.skip_ci') }} == ''
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
