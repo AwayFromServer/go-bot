@@ -18,6 +18,16 @@ jobs:
           git config --global user.email "bogus@example.com"
           git config --global user.name "Someone"
           git config --global --add safe.directory /__w/gobot/gobot
+      - uses: nhedger/setup-sops@v2
+        id: secrets
+        with:
+          version: 3.8.1
+      - name: Create key.pgp
+        run: echo ${{ secrets.SOPS_KEY }} > key.pgp
+      - name: Import Private PGP Key
+        run: gpg --import key.pgp
+      - name: Decrypt config.enc.yaml
+        run: sops decrypt config.enc.yaml
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
