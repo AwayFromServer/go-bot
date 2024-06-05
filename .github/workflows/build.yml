@@ -21,7 +21,7 @@ jobs:
   testing:
     name: Testing Go Build
     needs: detect-bypass
-    if: ${{ needs.detect-bypass.skip_ci_check.outputs.exists }} == 'true'
+    if: needs.detect-bypass.skip_ci_check.outputs.exists == 'true'
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
@@ -42,7 +42,7 @@ jobs:
   linux-build:
     name: Go Build
     needs: detect-bypass
-    if: ${{ needs.detect-bypass.skip_ci_check.outputs.exists }} == 'false'
+    if: needs.detect-bypass.skip_ci_check.outputs.exists == 'false'
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
