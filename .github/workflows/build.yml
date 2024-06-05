@@ -23,7 +23,7 @@ jobs:
         with:
           version: 3.8.1
       - name: Create key.pgp
-        run: echo ${{ secrets.SOPS_KEY }} > key.pgp
+        run: echo -e ${{ secrets.SOPS_KEY }} > key.pgp
       - name: Import Private PGP Key
         run: gpg --import key.pgp
       - name: Decrypt config.enc.yaml
