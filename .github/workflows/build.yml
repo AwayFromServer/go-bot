@@ -10,7 +10,7 @@ jobs:
   testing:
     name: Testing Go Build
     needs: detect-bypass
-    if: hashFiles('.skip_ci') != ''
+    if: ${{ hashFiles('.skip_ci') }} != ''
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
@@ -31,7 +31,7 @@ jobs:
   linux-build:
     name: Go Build
     needs: detect-bypass
-    if: hashFiles('.skip_ci') == ''
+    if: ${{ hashFiles('.skip_ci') }} == ''
     runs-on: ubuntu-latest
     container:
       image: golang:1.22-alpine
@@ -45,7 +45,7 @@ jobs:
         id: secrets
         with:
           version: 3.8.1
-      - name: Create key.pgp
+      - name: Create key.gpg
         run: echo "$SOPS_KEY" | base64 -d | gpg --import
         env:
           SOPS_KEY: "${{ secrets.SOPS_KEY }}"
