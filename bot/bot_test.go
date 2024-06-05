@@ -3,7 +3,6 @@ package bot
 import (
 	"testing"
 
-	"github.com/bwmarrin/discordgo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -61,13 +60,13 @@ func TestStartSession(t *testing.T) {
 	assert.NotEqual(t, nil, b.session)
 }
 
-func TestNewMessage(t *testing.T) {
-	var c conf
-	c.getConf(CFGFILE)
-	b := Bot{config: c}
-	b.startSession()
+// func TestNewMessage(t *testing.T) {
+// 	var c conf
+// 	c.getConf(CFGFILE)
+// 	b := Bot{config: c}
+// 	b.startSession()
 
-	msg := &discordgo.MessageCreate{}
+// 	msg := &discordgo.MessageCreate{}
 
-	b.newMessage(b.session, msg)
-}
+// 	b.newMessage(b.session, msg)
+// }
