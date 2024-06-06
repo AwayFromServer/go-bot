@@ -105,25 +105,20 @@ func (b *Bot) startSession() *discordgo.Session {
 }
 
 func (b *Bot) newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) {
-	// Don't respond to bot's own messages
-	if message.Author.ID == discord.State.User.ID {
-		return
-	}
 	var err error
 	switch {
+	case message.Author.ID == discord.State.User.ID:
+		return // Don't respond to bot's own messages
 	case strings.Contains(message.Content, "server status"):
 		_, err = discord.ChannelMessageSend(message.ChannelID, "I can help with that! Use '!status'!")
 	case strings.Contains(message.Content, "bot"):
 		_, err = discord.ChannelMessageSend(message.ChannelID, "Who, me?")
 	case strings.Contains(message.Content, "!status"):
-		currentStatus, err := getCurrentStatus(b.config.BotTarget)
+		var currentStatus *discordgo.MessageSend
+		currentStatus, err = getCurrentStatus(b.config.BotTarget)
 		if err == nil {
 			_, err = discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
-			if err != nil {
-				log.Fatal(err)
-			}
 		}
-
 	}
 	if err != nil {
 		log.Fatal(err)
