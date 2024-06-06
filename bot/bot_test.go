@@ -21,8 +21,8 @@ func TestConfigs(t *testing.T) {
 		},
 		{
 			"overrides",
-			conf{"abc", "123", "qqq"},
-			conf{"abc", "123", "qqq"},
+			conf{"qax", "qix", "qux"},
+			conf{"qax", "qix", "qux"},
 		}, //
 		{
 			"error thrown",
