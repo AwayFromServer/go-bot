@@ -26,10 +26,9 @@ jobs:
         run: echo -e "$SOPS_KEY" | base64 -d | sed 's/\\n/\'$'\n''/g' > key.gpg
         env:
           SOPS_KEY: ${{ secrets.TEST_KEY }}
-      - name: Cat key.gpg
-        run: cat key.gpg
       - name: Import key.gpg
         run: gpg --import key.gpg
+      - uses: actions/checkout@v4
       - name: Decrypt config.enc.yaml
         run: sops decrypt config.enc.yaml
       - uses: actions/checkout@v4
