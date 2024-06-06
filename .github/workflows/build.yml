@@ -14,7 +14,9 @@ jobs:
       image: golang:1.22-alpine
     steps:
       - run: |
-          apk add git make bash sops gnupg curl
+          apk add git make bash sops gnupg curl tar
+          curl -L https://github.com/cli/cli/releases/download/v2.50.0/gh_2.50.0_linux_amd64.tar.gz --output gh.tar.gz
+          tar -xvf gh.tar.gz && mv ./gh_2.50.0_linux_amd64/bin/gh /usr/bin
           git config --global user.email "bogus@example.com"
           git config --global user.name "Someone"
           git config --global --add safe.directory /__w/gobot/gobot
