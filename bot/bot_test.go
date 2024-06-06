@@ -1,45 +1,72 @@
 package bot
 
 import (
-	"context"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestSetup(t *testing.T) {
-	expected_token := "abc123"
-	expected_url := "https://google.com"
-	t.Setenv("BOT_TOKEN", expected_token)
-	t.Setenv("HEARTBEAT_URL", expected_url)
+const TESTFILE = "../config_test.yaml"
 
-	Setup()
+func TestConfigs(t *testing.T) {
+	testdata := []struct {
+		name     string
+		expected conf
+		actual   conf
+	}{
+		{
+			"no overrides",
+			conf{"foo", "bar", "baz"},
+			conf{},
+		},
+		{
+			"overrides",
+			conf{"abc", "123", "qqq"},
+			conf{"abc", "123", "qqq"},
+		}, //
+		{
+			"error thrown",
+			conf{"pap", "pep", "pip"},
+			conf{"pap", "pep", "pip"},
+		},
+		// {"", "", ""}, // new test case
+	}
 
-	switch {
-	case botToken != expected_token:
-		if botToken == "" {
-			t.Skip("botToken is unset")
-		}
-		t.Fatalf("BOT_TOKEN = %q, want %v", botToken, expected_token)
-	case heartbeatURL != expected_url:
-		if heartbeatURL == "" {
-			t.Skip("heartbeatURL is unset")
-		}
-		t.Fatalf("HEARTBEAT_URL = %q, want %v", heartbeatURL, expected_url)
+	for _, subtest := range testdata {
+		t.Run(subtest.name, func(t *testing.T) {
+			t.Setenv(BT, subtest.actual.BotToken)
+			t.Setenv(TU, subtest.actual.BotTarget)
+			t.Setenv(BP, subtest.actual.BotPrefix)
+
+			var c conf
+			c.getConf(TESTFILE)
+			c.getOverrides()
+
+			assert.Equal(t, subtest.expected.BotToken, c.BotToken)
+			assert.Equal(t, subtest.expected.BotTarget, c.BotTarget)
+			assert.Equal(t, subtest.expected.BotPrefix, c.BotPrefix)
+
+		})
 	}
 }
 
-func TestRun(t *testing.T) {
-	expected_url := "https://google.com"
-	t.Setenv("HEARTBEAT_URL", expected_url)
-	Setup()
+func TestStartSession(t *testing.T) {
+	var c conf
+	c.getConf(CFGFILE)
+	b := Bot{config: c}
 
-	if botToken == "" {
-		t.Skip("botToken is unset")
-	}
-	ctx, cancel := context.WithCancel(context.Background())
-	go Run(ctx)
+	b.startSession()
 
-	if heartbeatURL != expected_url { // placeholder -> bot functions get tested here
-		t.Fatalf("HEARTBEAT_URL = %q, want %v", heartbeatURL, expected_url)
-	}
-	cancel()
+	assert.NotEqual(t, nil, b.session)
 }
+
+// func TestNewMessage(t *testing.T) {
+// 	var c conf
+// 	c.getConf(CFGFILE)
+// 	b := Bot{config: c}
+// 	b.startSession()
+
+// 	msg := &discordgo.MessageCreate{}
+
+// 	b.newMessage(b.session, msg)
+// }

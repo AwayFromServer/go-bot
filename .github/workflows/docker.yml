@@ -20,13 +20,17 @@ jobs:
       DOCKER_BUILDKIT: 1
       DOCKER_CLI_EXPERIMENTAL: enabled
     steps:
+    - uses: actions/checkout@v4
     - name: enable experimental mode
+      if: ${{ hashFiles('.skip_ci') == '' }}
       run: |
         mkdir -p ~/.docker
         echo '{"experimental": "enabled"}' > ~/.docker/config.json
     - name: Set up QEMU
+      if: ${{ hashFiles('.skip_ci') == '' }}
       uses: docker/setup-qemu-action@v3.0.0
     - name: Set up Docker Buildx
+      if: ${{ hashFiles('.skip_ci') == '' }}
       id: buildx
       uses: docker/setup-buildx-action@v3.3.0
       with:
@@ -35,9 +39,12 @@ jobs:
           image=moby/buildkit:buildx-stable-1
           network=host
     - name: Available platforms
+      if: ${{ hashFiles('.skip_ci') == '' }}
       run: echo {{ `${{ steps.buildx.outputs.platforms }}` }}
     - run: docker info && docker version
+      if: ${{ hashFiles('.skip_ci') == '' }}
     - uses: actions/checkout@v4
+      if: ${{ hashFiles('.skip_ci') == '' }}
       with:
         fetch-depth: 0
     - name: determine if this is a tag
@@ -50,7 +57,7 @@ jobs:
           echo "major_version=${tag%%\.*}" >> $GITHUB_ENV
         fi
         echo $GITHUB_ENV
-      if: github.repository == 'awayfromserver/gobot'
+      if: github.repository == 'awayfromserver/gobot' && ${{ hashFiles('.skip_ci') == '' }}
     - name: Build & Push (non-main)
       run: |
         set -ex
@@ -58,26 +65,26 @@ jobs:
 
         docker buildx imagetools create --dry-run -t localhost:5000/gobot:dev localhost:5000/gobot:latest
         docker buildx imagetools create --dry-run -t localhost:5000/gobot:dev-alpine localhost:5000/gobot:alpine
-      if: github.repository != 'awayfromserver/gobot' || (github.ref != 'refs/heads/main' && env.is_tag != 'true')
+      if: (github.repository != 'awayfromserver/gobot' || (github.ref != 'refs/heads/main' && env.is_tag != 'true')) && ${{ hashFiles('.skip_ci') == '' }}
     - name: Login to GHCR
       uses: docker/login-action@v3.2.0
       with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      if: github.repository == 'awayfromserver/gobot' && (github.ref == 'refs/heads/main' || env.is_tag == 'true')
+      if: github.repository == 'awayfromserver/gobot' && (github.ref == 'refs/heads/main' || env.is_tag == 'true' && hashFiles('.skip_ci') == '' )
     - name: Login to DockerHub
       uses: docker/login-action@v3.2.0
       with:
           # NOTE: DOCKERHUB_TOKEN and DOCKERHUB_USERNAME must be present in https://github.com/awayfromserver/gobot/settings
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      if: github.repository == 'awayfromserver/gobot' && (github.ref == 'refs/heads/main' || env.is_tag == 'true')
+      if: github.repository == 'awayfromserver/gobot' && ( github.ref == 'refs/heads/main' || env.is_tag == 'true' && hashFiles('.skip_ci') == '' )
     - name: Build & Push (main)
       run: |
         make docker-multi COMMIT=${{ github.sha }} DOCKER_REPO=awayfromserver/gobot BUILDX_ACTION=--push
         make docker-multi COMMIT=${{ github.sha }} DOCKER_REPO=ghcr.io/awayfromserver/gobot BUILDX_ACTION=--push
-      if: github.repository == 'awayfromserver/gobot' && github.ref == 'refs/heads/main'
+      if: github.repository == 'awayfromserver/gobot' && github.ref == 'refs/heads/main' && hashFiles('.skip_ci') == ''
     - name: Build & Push (tagged release)
       run: |
         export srcrepo=awayfromserver/gobot
@@ -111,4 +118,4 @@ jobs:
         docker buildx imagetools create -t ${repo}:stable-alpine ${srcrepo}:alpine
         docker buildx imagetools create -t ${repo}:${git_tag}-alpine ${srcrepo}:alpine
         docker buildx imagetools create -t ${repo}:${major_version}-alpine ${srcrepo}:alpine
-      if: github.repository == 'awayfromserver/gobot' && env.is_tag == 'true'
+      if: github.repository == 'awayfromserver/gobot' && env.is_tag == 'true' && hashFiles('.skip_ci') == ''

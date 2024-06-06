@@ -17,5 +17,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/labeler@v5
+        if: ${{ hashFiles('.skip_ci') == '' }}
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"

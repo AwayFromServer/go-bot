@@ -1,12 +1,14 @@
-BOT_TOKEN: ENC[AES256_GCM,data:DgI10wm0B1GWqrHhXUksZy+NYmR6ZJAwGjjYcrI05Gw0WmRxbVgk0bDndK9qxoPw3imxxyMF+/7qr9GWYYSblAOZBMnfknpk,iv:0+D7N7odlfebaLjBrCqeBKbh30C/ylQxiDuKsCBF3d8=,tag:pAOTok5OVjoIA/DoKxP+Rg==,type:str]
+Token: ENC[AES256_GCM,data:LR5i/kJj4K3VOfSdkthCgUsMt9NTxDaI1Opos5n65pv4L9TfarZL4Lr+m2W2gE5Y61OkRINQvU7wHP/yEXwUomoxsjvgEQ/U,iv:kSHWZKNHONN7rOsNI8Uu3QmL9nYlSYfodiomkWAjCAY=,tag:7nGzOSEm7/IeCy3Rkr42mw==,type:str]
+Target: ENC[AES256_GCM,data:8xQzBNKeUq1gT/253CyEOy7GAuvt2XS0pK8sMuSbNuNKCuM=,iv:YBMSvSyHF32Ri+0jd0yl2zTfQu22WFbJc+6XqiNLVTo=,tag:ORuEK8nnRHdE/VdgVA+Ykw==,type:str]
+Prefix: ENC[AES256_GCM,data:xg==,iv:jw1yGBGVpx0QqzSRhH7Uxu6JeCfuLs+eniEQY3pmGyM=,tag:Uj58pb6LQMdM3w4OvIAjXA==,type:str]
 sops:
     kms: []
     gcp_kms: []
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2024-05-18T14:52:20Z"
-    mac: ENC[AES256_GCM,data:aEqiClihqPAXaeCV45Th9HFj5OXi2Ahuak46RewGzoidmgUjaLfwsDBrhs8z2WgNsE50SoSWnLY0bRwjmv07X1lTJZ3Tc1LJ3FnpL/Gf85XDr7wlQQMfLxXgF9NDBMd3UcsEn2lT2zZtrWmxsiIZ8FVFIKd1jBrsYj0g/wpre90=,iv:hYSXbPjbi5TZMJtLRSUVIuTmr6U220kjS6Rf5I/J1tw=,tag:BPRDgx+gogz1f+7n5nuguw==,type:str]
+    lastmodified: "2024-06-05T08:04:50Z"
+    mac: ENC[AES256_GCM,data:yMRMFTfs/z46eekXxlh6DJNSfvIqTMeaklC6kJ2ugNSVkfTZQ1rccwldUm3Aj6qMhFzg9TcbMRsjzIHQlQ43gLQ1S3H2EUbWUJYLLq7VGxRHOVeY9PDjmqGjkMvAFUEd3Pgulh9fXz+r71fhdZgtEyGi+U5mumOZX3rNme6I0Pk=,iv:Tphr5YYEQTF+8jCx4GgwNgcS57aLKrEDTu9U5bWfADU=,tag:9vqvkgF15mmhv1y5Sz2ewQ==,type:str]
     pgp:
         - created_at: "2024-05-18T14:52:01Z"
           enc: |-

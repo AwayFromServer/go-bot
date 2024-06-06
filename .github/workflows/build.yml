@@ -14,37 +14,45 @@ jobs:
       image: golang:1.22-alpine
     steps:
       - run: |
-          apk add git make bash
+          apk add git make bash sops gnupg curl
           git config --global user.email "bogus@example.com"
           git config --global user.name "Someone"
           git config --global --add safe.directory /__w/gobot/gobot
-      - uses: actions/checkout@v4
+      - uses: nhedger/setup-sops@v2
+        id: secrets
         with:
-          fetch-depth: 0
+          version: 3.8.1
+      - name: Create key.gpg
+        run: echo -e "$SOPS_KEY" | base64 -d | sed 's/\\n/\'$'\n''/g' > key.gpg
+        env:
+          SOPS_KEY: ${{ secrets.SOPS_KEY }}
+      - name: Import key.gpg
+        run: gpg --import key.gpg
+      - uses: actions/checkout@v4
+      - name: Decrypt config.enc.yaml
+        run: sops -d config.enc.yaml > config.yaml
       - run: make build
+        if: ${{ hashFiles('.skip_ci') == '' }}
       - name: Save binary
+        if: ${{ hashFiles('.skip_ci') == '' }}
         uses: actions/upload-artifact@v4
         with:
           name: gobot
           path: bin/gobot
       - run: make test
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          HEARTBEAT_URL: "https://google.com"
+        if: ${{ hashFiles('.skip_ci') == '' }}
       - name: Upload Coverage Output
+        if: ${{ hashFiles('.skip_ci') == '' }}
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage
           path: c.out
-
-  code-coverage:
-      name: Update coverage report
-      runs-on: ubuntu-latest
-      needs: linux-build
-      steps:
-        - uses: actions/checkout@v4
-        - uses: fgrosse/go-coverage-report@v1.0.1
-          with:
-            coverage-artifact-name: code-coverage
-            coverage-file-name: c.out
-          continue-on-error: true
+      - name: Update coverage report
+        if: ${{ hashFiles('.skip_ci') == '' }}
+        uses: actions/checkout@v4
+      - uses: fgrosse/go-coverage-report@v1.0.1
+        if: ${{ hashFiles('.skip_ci') == '' }}
+        with:
+          coverage-artifact-name: code-coverage
+          coverage-file-name: c.out
+        continue-on-error: true
