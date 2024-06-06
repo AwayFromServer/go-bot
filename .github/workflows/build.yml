@@ -25,7 +25,7 @@ jobs:
       - name: Create key.gpg
         run: echo -e "$SOPS_KEY" | base64 -d | sed 's/\\n/\'$'\n''/g' > key.gpg
         env:
-          SOPS_KEY: ${{ secrets.TEST_KEY }}
+          SOPS_KEY: ${{ secrets.SOPS_KEY }}
       - name: Import key.gpg
         run: gpg --import key.gpg
       - uses: actions/checkout@v4
