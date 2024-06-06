@@ -23,7 +23,7 @@ jobs:
         with:
           version: 3.8.1
       - name: Create key.gpg
-        run: bash -c "echo '$SOPS_KEY' | base64 -d | gpg --import"
+        run: echo -n "$SOPS_KEY" | base64 -d | gpg --import
         env:
           SOPS_KEY: ${{ secrets.SOPS_KEY }}
       - name: Decrypt config.enc.yaml
