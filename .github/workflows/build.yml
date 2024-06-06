@@ -50,7 +50,7 @@ jobs:
       - name: Update coverage report
         if: ${{ hashFiles('.skip_ci') == '' }}
         uses: actions/checkout@v4
-      - uses: AwayFromServer/go-coverage-report@main
+      - uses: AwayFromServer/go-coverage-report@v1.0.2-alpine
         if: ${{ hashFiles('.skip_ci') == '' }}
         with:
           coverage-artifact-name: code-coverage
