@@ -18,11 +18,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Quick build (linux/alpine only)
-      if: ${{ hashFiles('.skip_ci') }} == ''
+      if: ${{ hashFiles('.skip_ci') == '' }}
       run: |
         docker build --target gobot-alpine -t gobot .
     - name: Run Trivy vulnerability scanner (table output)
-      if: ${{ hashFiles('.skip_ci') }} == ''
+      if: ${{ hashFiles('.skip_ci') == '' }}
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: gobot
@@ -32,7 +32,7 @@ jobs:
         vuln-type: os,library
         severity: CRITICAL,HIGH
     - name: Run Trivy vulnerability scanner
-      if: ${{ hashFiles('.skip_ci') }} == ''
+      if: ${{ hashFiles('.skip_ci') == '' }}
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: gobot
