@@ -40,7 +40,7 @@ jobs:
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      if: ${{ hashFiles('.skip_ci') }} == ""
+      if: ${{ hashFiles('.skip_ci') == '' }}
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
@@ -52,7 +52,7 @@ jobs:
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
-      if: ${{ hashFiles('.skip_ci') }} == ""
+      if: ${{ hashFiles('.skip_ci') == '' }}
       uses: github/codeql-action/autobuild@v3
 
     # ℹ️ Command-line programs to run using the OS shell.
@@ -67,5 +67,5 @@ jobs:
     #   make release
 
     - name: Perform CodeQL Analysis
-      if: ${{ hashFiles('.skip_ci') }} == ""
+      if: ${{ hashFiles('.skip_ci') == '' }}
       uses: github/codeql-action/analyze@v3

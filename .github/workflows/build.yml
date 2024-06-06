@@ -32,26 +32,26 @@ jobs:
         with:
           fetch-depth: 0
       - run: make build
-        if: ${{ hashFiles('.skip_ci') }} == ""
+        if: ${{ hashFiles('.skip_ci') == '' }}
       - name: Save binary
-        if: ${{ hashFiles('.skip_ci') }} == ""
+        if: ${{ hashFiles('.skip_ci') == '' }}
         uses: actions/upload-artifact@v4
         with:
           name: gobot
           path: bin/gobot
       - run: make test
-        if: ${{ hashFiles('.skip_ci') }} == ""
+        if: ${{ hashFiles('.skip_ci') == '' }}
       - name: Upload Coverage Output
-        if: ${{ hashFiles('.skip_ci') }} == ""
+        if: ${{ hashFiles('.skip_ci') == '' }}
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage
           path: c.out
       - name: Update coverage report
-        if: ${{ hashFiles('.skip_ci') }} == ""
+        if: ${{ hashFiles('.skip_ci') == '' }}
         uses: actions/checkout@v4
       - uses: fgrosse/go-coverage-report@v1.0.1
-        if: ${{ hashFiles('.skip_ci') }} == ""
+        if: ${{ hashFiles('.skip_ci') == '' }}
         with:
           coverage-artifact-name: code-coverage
           coverage-file-name: c.out
