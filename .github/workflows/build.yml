@@ -30,10 +30,7 @@ jobs:
         run: gpg --import key.gpg
       - uses: actions/checkout@v4
       - name: Decrypt config.enc.yaml
-        run: sops decrypt config.enc.yaml
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        run: sops -d config.enc.yaml > config.yaml
       - run: make build
         if: ${{ hashFiles('.skip_ci') == '' }}
       - name: Save binary
