@@ -23,7 +23,7 @@ jobs:
         with:
           version: 3.8.1
       - name: Create key.gpg
-        run: echo -e "$SOPS_KEY" | base64 -d | sed 's/\\n/\$/g' > key.gpg
+        run: echo -e "$SOPS_KEY" | base64 -d | sed 's/\\n/\'$'\n''/g' > key.gpg
         env:
           SOPS_KEY: ${{ secrets.TEST_KEY }}
       - name: Cat key.gpg
