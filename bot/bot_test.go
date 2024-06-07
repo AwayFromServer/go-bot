@@ -3,6 +3,7 @@ package bot
 import (
 	"testing"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,8 +22,8 @@ func TestConfigs(t *testing.T) {
 		},
 		{
 			"overrides",
-			conf{"abc", "123", "qqq"},
-			conf{"abc", "123", "qqq"},
+			conf{"qax", "qix", "qux"},
+			conf{"qax", "qix", "qux"},
 		}, //
 		{
 			"error thrown",
@@ -60,13 +61,25 @@ func TestStartSession(t *testing.T) {
 	assert.NotEqual(t, nil, b.session)
 }
 
-// func TestNewMessage(t *testing.T) {
-// 	var c conf
-// 	c.getConf(CFGFILE)
-// 	b := Bot{config: c}
-// 	b.startSession()
+func TestNewMessage(t *testing.T) {
+	// read in config and overrides
+	var c conf
+	c.getConf(CFGFILE)
+	c.getOverrides()
 
-// 	msg := &discordgo.MessageCreate{}
+	// assign config to new Bot
+	b := Bot{config: c}
+	b.session = b.startSession()
+	b.session.AddHandler(b.newMessage)
+	// open session connection
+	err := b.startSession().Open()
+	defer b.session.Close()
 
-// 	b.newMessage(b.session, msg)
-// }
+	m := discordgo.Message{}
+
+	m.Content = ""
+
+	// m.Author.ID = b.session.State.SessionID
+	// err := b.newMessage(b.session, &discordgo.MessageCreate{})
+	assert.Equal(t, nil, err)
+}
