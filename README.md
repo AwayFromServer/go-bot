@@ -22,6 +22,7 @@ For example, the `!status` command checks if the bot can reach a given URL, defi
 - Store the TokenID of the bot! Gobot can't work without it!
 - Run gobot with `BOT_TOKEN` set to your TokenID from the previous step
 - Set `TARGET_URL` to a website you'd like to poke for status with the `!status` command
+- Set `BOT_PREFIX` to pick a prefix for your commands, such as `status`, as seen above
 
 ### Required inputs:
 ```
