@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: get sops
-      run: apt-get install sops -y
+      run: sudo apt-get install sops -y
     - name: enable experimental mode
       run: |
         mkdir -p ~/.docker
