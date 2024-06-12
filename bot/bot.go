@@ -8,116 +8,96 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
-	"gopkg.in/yaml.v3"
+
+	"github.com/awayfromserver/gobot/config"
 )
 
-const BT = "BOT_TOKEN"
-const TU = "TARGET_URL"
-const BP = "BOT_PREFIX"
-const CFGFILE = "../config.yaml"
+const BT = "botToken"
+const BP = "botPrefix"
 
 type Bot struct {
-	config     conf
+	config     []map[string]interface{}
 	session    *discordgo.Session
 	botChannel chan os.Signal
 }
 
-type conf struct {
-	BotToken  string `yaml:"Token"`
-	BotTarget string `yaml:"Target"`
-	BotPrefix string `yaml:"Prefix"`
-}
+/*
+Run() is essentially the main bot loop
+*/
+func Run() error {
+	cfgFilename := "config.json"
 
-func Run() {
-	// read in config and overrides
-	var c conf
-	c.getConf(CFGFILE)
-	c.getOverrides()
-
-	// assign config to new Bot
-	b := Bot{config: c}
-	b.session = b.startSession()
-	b.session.AddHandler(b.newMessage)
-	// open session connection
-	err := b.session.Open()
-
-	if err != nil {
-		log.Fatal(err)
+	for i, argument := range os.Args {
+		switch {
+		case argument == "-f":
+			{
+				log.Printf("Override detected for %s. New value: %s", "config file", os.Args[i+1])
+				cfgFilename = os.Args[i+1]
+			}
+		}
 	}
 
+	cfg, err := config.GetConfig(cfgFilename)
+	if err != nil {
+		return err
+	}
+	log.Println("Finished reading the file!")
+
+	b := Bot{config: config.GetOverrides(cfg)}
+	log.Println("Finished reading overrides!")
+
+	b.session, err = discordgo.New("Bot " + b.config[0][BT].(string))
+	if err != nil {
+		return err
+	}
+	log.Println("Session created!")
+
+	b.session.AddHandler(newMessage)
+	err = b.session.Open()
+	log.Println("Session opened!")
 	defer b.session.Close()
+	if err != nil {
+		return err
+	}
 
 	b.botChannel = make(chan os.Signal, 1)
+	log.Println("Bot is now running...")
+	log.Println("Ctrl+C to exit...")
 	signal.Notify(b.botChannel, os.Interrupt)
 	<-b.botChannel
 	fmt.Println("Bot shutting down...")
+	return err
 }
 
-func (c *conf) getConf(filename string) *conf {
-
-	yamlFile, err := os.ReadFile(filename)
-	if err == nil {
-		err = yaml.Unmarshal(yamlFile, c)
-	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	return c
-}
-
-func (c *conf) getOverrides() *conf {
-	bt, btok := os.LookupEnv(BT)
-	if !btok {
-		log.Printf("No override detected for %s", BT)
-	} else if bt != "" {
-		log.Printf("Override detected for %s. Swapping for ENVVAR. New value: %s", BT, bt)
-		c.BotToken = bt
-	}
-
-	tu, tuok := os.LookupEnv(TU)
-	if !tuok {
-		log.Printf("No override detected for %s", TU)
-	} else if tu != "" {
-		log.Printf("Override detected for %s. Swapping for ENVVAR. New value: %s", TU, tu)
-		c.BotTarget = tu
-	}
-
-	bp, bpok := os.LookupEnv(BP)
-	if !bpok {
-		log.Printf("No override detected for %s", BP)
-	} else if bp != "" {
-		log.Printf("Override detected for %s. Swapping for ENVVAR. New value: %s", BP, bp)
-		c.BotPrefix = bp
-	}
-
-	return c
-}
-
-func (b *Bot) startSession() *discordgo.Session {
-	session, err := discordgo.New("Bot " + b.config.BotToken)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return session
-}
-
-func (b *Bot) newMessage(discord *discordgo.Session, message *discordgo.MessageCreate) error {
+func newMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
 	var err error
 	switch {
-	case message.Author.ID == discord.State.User.ID:
-		return nil // Don't respond to bot's own messages
+	case message.Author.ID == session.State.User.ID:
+		return // Don't respond to bot's own messages
 	case strings.Contains(message.Content, "server status"):
-		_, err = discord.ChannelMessageSend(message.ChannelID, "I can help with that! Use '!status'!")
+		_, err = session.ChannelMessageSend(message.ChannelID, "I can help with that! Use '!status'!")
 	case strings.Contains(message.Content, "bot"):
-		_, err = discord.ChannelMessageSend(message.ChannelID, "Who, me?")
-	case strings.Contains(message.Content, "!status"):
-		var currentStatus *discordgo.MessageSend
-		currentStatus, err = getCurrentStatus(b.config.BotTarget)
+		_, err = session.ChannelMessageSend(message.ChannelID, "Who, me?")
+	case string([]rune(message.Content)[0]) == "!":
+		log.Printf("Command received: %s", message.Content)
+		cmdLine := strings.Split(message.Content, "!")
+		cmdWords := strings.Split(cmdLine[1], " ")
+
+		execBotCommand(session, message, cmdWords)
+	}
+	if err != nil {
+		log.Print(err)
+	}
+}
+
+func execBotCommand(session *discordgo.Session, message *discordgo.MessageCreate, cmdWords []string) error {
+	var err error
+	var currentStatus *discordgo.MessageSend
+	switch {
+	case cmdWords[0] == "status":
+		currentStatus, err = getCurrentStatus(cmdWords[1])
 		if err == nil {
-			_, err = discord.ChannelMessageSendComplex(message.ChannelID, currentStatus)
+			_, err = session.ChannelMessageSendComplex(message.ChannelID, currentStatus)
 		}
 	}
 	return err

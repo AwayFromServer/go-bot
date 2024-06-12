@@ -15,14 +15,14 @@ func TestCmdStatus(t *testing.T) {
 	}{
 		{
 			"Valid status check",
-			"https://google.com",
-			"It looks like it's up! https://google.com",
+			"https://dns.google",
+			"It looks like it's up!",
 			"",
 		},
 		{
 			"Failed status check",
 			"this is not a website",
-			"It looks like it's offline... this is not a website",
+			"It looks like it's offline...",
 			"Get \"this%20is%20not%20a%20website\": unsupported protocol scheme \"\"",
 		},
 	}
@@ -39,14 +39,14 @@ func TestCmdStatus(t *testing.T) {
 		})
 	}
 	target := "https://google.com"
-	expected := "It looks like it's up! " + target
+	expected := "It looks like it's up!"
 	actual, err := getCurrentStatus(target)
 
 	assert.Equal(t, expected, actual.Content)
 	assert.Equal(t, nil, err)
 
 	target = "this is not a website"
-	expected = "It looks like it's offline... " + target
+	expected = "It looks like it's offline..."
 	actual, err = getCurrentStatus(target)
 
 	assert.Equal(t, expected, actual.Content)

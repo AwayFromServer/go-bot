@@ -1,9 +1,13 @@
 package main
 
 import (
+	"os"
+
 	"github.com/awayfromserver/gobot/bot"
 )
 
 func main() {
-	bot.Run()
+	if bot.Run() != nil {
+		os.Exit(1)
+	}
 }
