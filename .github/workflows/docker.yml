@@ -21,6 +21,8 @@ jobs:
       DOCKER_CLI_EXPERIMENTAL: enabled
     steps:
     - uses: actions/checkout@v4
+    - name: get sops
+      run: apt-get install sops -y
     - name: enable experimental mode
       run: |
         mkdir -p ~/.docker
@@ -52,6 +54,18 @@ jobs:
         fi
         echo $GITHUB_ENV
       if: github.repository == 'awayfromserver/gobot'
+    - uses: nhedger/setup-sops@v2
+      id: secrets
+      with:
+        version: 3.8.1
+    - name: Create key.gpg
+      run: echo -e "$SOPS_KEY" | base64 -d | sed 's/\\n/\'$'\n''/g' > key.gpg
+      env:
+        SOPS_KEY: ${{ secrets.SOPS_KEY }}
+    - name: Import key.gpg
+      run: gpg --import key.gpg
+    - name: Decrypt config.enc.yaml
+      run: sops -d config.enc.yaml > config.yaml
     - name: Build & Push (non-main)
       run: |
         set -ex

@@ -83,7 +83,7 @@ func newMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
 		cmdLine := strings.Split(message.Content, "!")
 		cmdWords := strings.Split(cmdLine[1], " ")
 
-		execBotCommand(session, message, cmdWords)
+		err = execBotCommand(session, message, cmdWords)
 	}
 	if err != nil {
 		log.Print(err)
