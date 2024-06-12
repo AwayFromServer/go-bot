@@ -7,15 +7,15 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func getCurrentStatus(hbUrl string) (*discordgo.MessageSend, error) {
+func getCurrentStatus(url string) (*discordgo.MessageSend, error) {
 	client := http.Client{Timeout: 5 * time.Second}
 	content := ""
 
-	response, err := client.Get(hbUrl)
+	response, err := client.Get(url)
 	if response == nil || err != nil {
-		content = "It looks like it's offline... " + hbUrl
+		content = "It looks like it's offline..."
 	} else {
-		content = "It looks like it's up! " + hbUrl
+		content = "It looks like it's up!"
 	}
 
 	return &discordgo.MessageSend{

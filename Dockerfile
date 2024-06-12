@@ -59,3 +59,5 @@ ENTRYPOINT [ "/bin/gobot" ]
 # --------------------------------------------------------------------
 
 FROM gobot-$TARGETOS AS gobot
+
+ADD config.yaml .
